@@ -183,6 +183,7 @@ public class JettyCoreServer implements CoreServer {
         }
     }
 
+    //NOTE(jackychee) 核心逻辑
     // 初始化各种manager
     private void initManager(final Instrumentation inst,
                              final CoreConfigure cfg) {

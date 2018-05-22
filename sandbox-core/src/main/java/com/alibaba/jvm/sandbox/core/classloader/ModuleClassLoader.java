@@ -49,6 +49,7 @@ public class ModuleClassLoader extends RoutingURLClassLoader {
                               final ClassLoader sandboxClassLoader) throws IOException {
         super(
                 new URL[]{new URL("file:" + tempModuleJarFile.getPath())},
+                //NOTE(jackychee) 可以看出ModuleClassLoader间共用如下的类。
                 new Routing(
                         sandboxClassLoader,
                         "^com\\.alibaba\\.jvm\\.sandbox\\.api\\..*",

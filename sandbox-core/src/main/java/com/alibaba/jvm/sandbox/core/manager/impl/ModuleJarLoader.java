@@ -81,10 +81,12 @@ public class ModuleJarLoader {
                 // 是否有模块加载成功
                 boolean hasModuleLoadedSuccessFlag = false;
 
+                //NOTE(jackychee) mjCb是否为空不影响主流程，因此在每次用到的时候都进行了非空判断。
                 if (null != mjCb) {
                     mjCb.onLoad(moduleJarFile);
                 }
 
+                //NOTE(jackychee) 目的是复用基础的类，借鉴双亲委托模型的思想。Routing
                 // 模块ClassLoader
                 moduleClassLoader = new ModuleClassLoader(moduleJarFile, sandboxClassLoader);
 
@@ -122,6 +124,8 @@ public class ModuleJarLoader {
 
                     try {
                         if (null != mCb) {
+                            //NOTE(jackychee) 上述操作仅仅是将模块中的Module类加载通过ModuleClassLoader加载到了内存和
+                            // 通过反射完成了简单的初始化后续的初始化以及其他的操作应该是放到了回调中完成。
                             mCb.onLoad(
                                     uniqueId, classOfModule, module, moduleJarFile,
                                     moduleClassLoader
@@ -151,6 +155,7 @@ public class ModuleJarLoader {
 
     }
 
+    //NOTE(jackychee) 通过接口优雅的将ModuleJarLoader和DefaultCoreModuleManager解耦。
     /**
      * 模块文件加载回调
      */

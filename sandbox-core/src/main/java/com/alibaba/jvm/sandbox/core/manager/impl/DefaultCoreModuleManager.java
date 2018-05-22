@@ -256,6 +256,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
             throw new ModuleException(uniqueId, MODULE_LOAD_ERROR, iae);
         }
 
+        //NOTE(jackychee): 这里调用用户模块的生命周期方法，在loadCompleted()方法中，对指定的类的方法织入AOP逻辑
         // 通知生命周期:模块加载开始
         fireModuleLifecycle(coreModule, ModuleLifeCycleEventBus.Event.LOAD);
 
@@ -353,7 +354,8 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
         coreModule.setActivated(true);
         logger.info("active module[id={};] finish.", coreModule.getUniqueId());
     }
-
+    //NOTE(jackychee) frozen的主要做的事情是：1，冻结与SandboxClassFileTransformer相关的监听器。
+    //2.将Module设置为inactive。
     @Override
     public synchronized void frozen(final CoreModule coreModule,
                                     final boolean isForce) throws ModuleException {
@@ -437,6 +439,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
 
         @Override
         public void onLoad(File moduleJarFile) throws Throwable {
+            //NOTE(jackychee) 按下不表
             providerManager.loading(moduleJarFile);
         }
 
@@ -462,6 +465,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
                 return;
             }
 
+            //NOTE(jackychee) 按下不表
             // 需要经过ModuleLoadingChain的过滤
             providerManager.loading(
                     uniqueId,
@@ -474,6 +478,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
             // 之前没有加载过，这里进行加载
             logger.debug("found new module[id={};class={};loader={};], prepare to load.",
                     uniqueId, moduleClass, moduleClassLoader);
+            //NOTE(jackychee) 模块的核心加载逻辑
             load(uniqueId, module, moduleJarFile, moduleClassLoader);
         }
     }
@@ -617,6 +622,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
     }
 
     /**
+     * NOTE(jackychee) 模块的加载和卸载入口
      * 强制刷新
      * 对所有已经加载的用户模块进行强行卸载并重新加载
      *
@@ -638,6 +644,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
 
         // 强制卸载掉所有等待卸载的模块集合中的模块
         for (final CoreModule coreModule : waitingUnloadCoreModules) {
+            //NOTE(jackychee)用户模块的卸载入口
             unload(coreModule, true);
         }
 
@@ -650,6 +657,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
         for (final File userModuleLibDir : userModuleLibFileArray) {
             if (userModuleLibDir.exists()
                     && userModuleLibDir.canRead()) {
+                //NOTE(jackychee)加载模块的核心逻辑
                 new ModuleJarLoader(userModuleLibDir, cfg.getLaunchMode(), sandboxClassLoader)
                         .load(new InnerModuleJarLoadCallback(), new InnerModuleLoadCallback());
             } else {

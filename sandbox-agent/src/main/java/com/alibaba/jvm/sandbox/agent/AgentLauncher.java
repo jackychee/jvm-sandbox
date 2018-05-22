@@ -87,6 +87,7 @@ public class AgentLauncher {
 
     /**
      * 动态加载
+     * NOTE(jackychee) 这种方式属于被动的加载的方式，由JVM自动触发，相比通过sun attach api的方式，这里不需要提供PID
      *
      * @param featureString 启动参数
      *                      [namespace,token,ip,port,prop]
@@ -204,6 +205,7 @@ public class AgentLauncher {
             // JtServer类定义
             final Class<?> classOfJtServer = agentLoader.loadClass(CLASS_OF_JETTY_CORE_SERVER);
 
+            //NOTE(jackychee) 这里之所以都是使用反射实例化对象，是为了保证类的加载由具体的类加载器来完成。
             // 获取JtServer单例
             final Object objectOfJtServer = classOfJtServer
                     .getMethod("getInstance")
@@ -213,6 +215,7 @@ public class AgentLauncher {
             final boolean isBind = (Boolean) classOfJtServer.getMethod("isBind").invoke(objectOfJtServer);
 
 
+            //NOTE(jackychee) 在JettyCoreServer中完成了对inst的初始化。
             // 如果未绑定,则需要绑定一个地址
             if (!isBind) {
                 try {

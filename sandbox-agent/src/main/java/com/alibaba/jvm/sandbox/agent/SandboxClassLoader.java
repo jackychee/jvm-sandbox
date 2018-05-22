@@ -15,6 +15,8 @@ class SandboxClassLoader extends URLClassLoader {
 
     SandboxClassLoader(final String namespace,
                        final String sandboxCoreJarFilePath) throws MalformedURLException {
+
+        //NOTE(jackychee) 从当前的ClassPath中查找类，没有采用双亲委托模型。
         super(new URL[]{new URL("file:" + sandboxCoreJarFilePath)});
         this.namespace = namespace;
         this.path = sandboxCoreJarFilePath;

@@ -74,6 +74,7 @@ public class CoreLauncher {
             } else {
                 vmObj = vmClass.getMethod("attach", vmdClass).invoke(null, attachVmdObj);
             }
+            //NOTE(jackychee)主动load agent.jar
             vmClass
                     .getMethod("loadAgent", String.class, String.class)
                     .invoke(vmObj, agentJarPath, cfg);
